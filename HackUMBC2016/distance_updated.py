@@ -1,5 +1,9 @@
 #special thanks to http://www.pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/
 
+# This is for christian, who's environment is fked
+# import sys
+# sys.path.append('/usr/local/lib/python2.7/site-packages')
+
 # import the necessary packages
 import numpy as np
 import cv2
@@ -31,7 +35,7 @@ KNOWN_DISTANCE = 24.0
 KNOWN_WIDTH = 2.0
  
 # initialize the list of images that we'll be using
-IMAGE_PATHS = ["image4.jpg"]
+IMAGE_PATHS = ["images/image4.jpg"]
  
 # load the furst image that contains an object that is KNOWN TO BE 2 feet
 # from our camera, then find the paper marker in the image, and initialize
