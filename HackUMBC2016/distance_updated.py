@@ -1,8 +1,8 @@
 #special thanks to http://www.pyimagesearch.com/2015/01/19/find-distance-camera-objectmarker-using-python-opencv/
 
 # This is for christian, who's environment is fked
-# import sys
-# sys.path.append('/usr/local/lib/python2.7/site-packages')
+import sys
+sys.path.append('/usr/local/lib/python2.7/site-packages')
 
 # import the necessary packages
 import numpy as np
@@ -13,6 +13,7 @@ def find_marker(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (5, 5), 0)
     edged = cv2.Canny(gray, 35, 125)
+    #cv2.imshow("image1", edged)
  
     # find the contours in the edged image and keep the largest one;
     # we'll assume that this is our piece of paper in the image
@@ -43,7 +44,7 @@ IMAGE_PATHS = ["images/image4.jpg"]
 image = cv2.imread(IMAGE_PATHS[0])
 print image.shape
 
-image = cv2.resize(image, (0,0), fx=0.3, fy=0.3)
+#image = cv2.resize(image, (0,0), fx=0.3, fy=0.3)
 print image.shape
 
 marker = find_marker(image)
@@ -66,5 +67,9 @@ for imagePath in IMAGE_PATHS:
     cv2.putText(image, "%.2fft" % (inches / 12),
                 (image.shape[1] - 200, image.shape[0] - 20), cv2.FONT_HERSHEY_SIMPLEX,
                 2.0, (0, 255, 0), 3)
+    
+    image = cv2.resize(image, (0,0), fx=0.9, fy=0.9)
+    cv2.namedWindow("image", 0)
     cv2.imshow("image", image)
+    cv2.resizeWindow("image", 1920, 1080)
     cv2.waitKey(0)
