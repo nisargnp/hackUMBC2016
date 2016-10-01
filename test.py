@@ -1,1 +1,1 @@
-__author__ = 'Matthew Choi'
+__author__ = 'Sprite fight spirit will live in this project'
