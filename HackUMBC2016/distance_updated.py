@@ -34,9 +34,10 @@ def find_marker(image):
     
     # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    gray = image
-    edged = cv2.Canny(gray, 20, 20)
-    cv2.imshow("canny", cv2.resize(edged, (0,0), fx=0.3, fy=0.3))
+    gray = cv2.GaussianBlur(image, (5, 5), 0)
+    edged = cv2.Canny(gray, 35, 125)
+    cv2.imshow("image1", edged)
+
  
     # find the contours in the edged image and keep the largest one;
     # we'll assume that this is our piece of paper in the image
@@ -59,7 +60,7 @@ KNOWN_DISTANCE = 12.0
 KNOWN_WIDTH = 2.0
  
 # initialize the list of images that we'll be using
-IMAGE_PATHS = ["images/1ft.jpg", "images/2ft.jpg", "images/3ft.jpg"]
+IMAGE_PATHS = ["images/box.jpg"]
 # IMAGE_PATHS = ["images/g1.jpg", "images/g2.jpg", "images/g3.jpg"]
  
 # load the furst image that contains an object that is KNOWN TO BE 2 feet
@@ -69,10 +70,10 @@ image = cv2.imread(IMAGE_PATHS[0])
 # image = cv2.resize(image, (0,0), fx=0.2, fy=0.2)
 
 # BLUE
-scale_red = 25
-scale_blue = 20
-scale_green = 25
-BINARY_THRESHOLDS = np.array([[200-scale_blue,200-scale_green,150-scale_red], [200+scale_blue,200+scale_green,150+scale_red]])
+#scale_red = 25
+#scale_blue = 20
+#scale_green = 25
+#BINARY_THRESHOLDS = np.array([[200-scale_blue,200-scale_green,150-scale_red], [200+scale_blue,200+scale_green,150+scale_red]])
 
 # ORANGE
 # scale_red = 50
@@ -87,8 +88,8 @@ BINARY_THRESHOLDS = np.array([[200-scale_blue,200-scale_green,150-scale_red], [2
 # BINARY_THRESHOLDS = np.array([[65-scale_blue,250-scale_green,5-scale_red], [65+scale_blue,250+scale_green,5+scale_red]])
 
 image = cv2.GaussianBlur(image, (5, 5), 0)
-image = cv2.inRange(image, *BINARY_THRESHOLDS)
-image = fill_contour(image)
+#image = cv2.inRange(image, *BINARY_THRESHOLDS)
+
 
 marker = find_marker(image)
 focalLength = (marker[1][0] * KNOWN_DISTANCE) / KNOWN_WIDTH
@@ -103,17 +104,19 @@ for imagePath in IMAGE_PATHS:
     # image = cv2.resize(image, (0,0), fx=0.2, fy=0.2)
 
     edited = cv2.GaussianBlur(image, (5, 5), 0)
-    edited = cv2.inRange(edited, *BINARY_THRESHOLDS)
-    edited = fill_contour(edited)
 
-    cv2.imshow("filled", cv2.resize(edited, (0,0), fx=0.3, fy=0.3))
+   # edited = cv2.inRange(edited, *BINARY_THRESHOLDS)
+
+    edited_small = cv2.resize(edited, (0,0), fx=0.3, fy=0.3)
+    cv2.imshow("canny", edited_small)
+    #cv2.waitKey(0)
 
     marker = find_marker(edited)
     inches = distance_to_camera(KNOWN_WIDTH, focalLength, marker[1][0])
  
     # draw a bounding box around the image and display it
     box = np.int0(cv2.cv.BoxPoints(marker))
-    cv2.drawContours(image, [box], -1, (0, 255, 0), 2)
+    cv2.drawContours(image, [box], -1, (0, 0, 255), 2)
     cv2.putText(image, "%.2fft" % (inches / 12),
                 (image.shape[1] - 200, image.shape[0] - 20), cv2.FONT_HERSHEY_SIMPLEX,
                 2.0, (0, 255, 0), 3)
@@ -121,5 +124,5 @@ for imagePath in IMAGE_PATHS:
     image = cv2.resize(image, (0,0), fx=0.3, fy=0.3)
     cv2.namedWindow("image", 0)
     cv2.imshow("image", image)
-    cv2.resizeWindow("image", 1920, 1080)
+    cv2.resizeWindow("image", 1280, 720)
     cv2.waitKey(0)
