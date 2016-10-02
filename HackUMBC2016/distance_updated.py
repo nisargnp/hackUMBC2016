@@ -44,12 +44,20 @@ IMAGE_PATHS = ["images/1ft.jpg", "images/2ft.jpg", "images/3ft.jpg"]
 image = cv2.imread(IMAGE_PATHS[0])
 # image = cv2.resize(image, (0,0), fx=0.2, fy=0.2)
 
-scale_red = 25
-scale_blue = 10
+#BLUE
+# scale_red = 25
+# scale_blue = 20
+# scale_green = 25
+# BINARY_THRESHOLDS = np.array([[200-scale_blue,200-scale_green,150-scale_red], [200+scale_blue,200+scale_green,150+scale_red]])
+
+#ORANGE
+scale_red = 50
+scale_blue = 5
 scale_green = 25
-BLUE_THRESHOLDS = np.array([[200-scale_blue,200-scale_green,150-scale_red], [200+scale_blue,200+scale_green,150+scale_red]])
+BINARY_THRESHOLDS = np.array([[5-scale_blue,120-scale_green,220-scale_red], [5+scale_blue,120+scale_green,220+scale_red]])
+
 image = cv2.GaussianBlur(image, (5, 5), 0)
-image = cv2.inRange(image, *BLUE_THRESHOLDS)
+image = cv2.inRange(image, *BINARY_THRESHOLDS)
 
 marker = find_marker(image)
 focalLength = (marker[1][0] * KNOWN_DISTANCE) / KNOWN_WIDTH
@@ -61,12 +69,11 @@ for imagePath in IMAGE_PATHS:
     image = cv2.imread(imagePath)
     # image = cv2.resize(image, (0,0), fx=0.2, fy=0.2)
 
-    scale_red = 25
-    scale_blue = 10
-    scale_green = 25
-    BLUE_THRESHOLDS = np.array([[200-scale_blue,200-scale_green,150-scale_red], [200+scale_blue,200+scale_green,150+scale_red]])
     edited = cv2.GaussianBlur(image, (5, 5), 0)
-    edited = cv2.inRange(edited, *BLUE_THRESHOLDS)
+    edited = cv2.inRange(edited, *BINARY_THRESHOLDS)
+
+    edited_small = cv2.resize(edited, (0,0), fx=0.3, fy=0.3)
+    cv2.imshow("canny", edited_small)
 
     marker = find_marker(edited)
     inches = distance_to_camera(KNOWN_WIDTH, focalLength, marker[1][0])
