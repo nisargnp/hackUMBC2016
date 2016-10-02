@@ -7,13 +7,36 @@ sys.path.append('/usr/local/lib/python2.7/site-packages')
 # import the necessary packages
 import numpy as np
 import cv2
+
+def fill_contour(image):
+
+    # Copy the thresholded image.
+    im_floodfill = image.copy()
+    
+    # Mask used to flood filling.
+    # Notice the size needs to be 2 pixels than the image.
+    h, w = im_floodfill.shape[:2]
+    mask = np.zeros((h+2, w+2), np.uint8)
+    
+    # Floodfill from point (0, 0)
+    cv2.floodFill(im_floodfill, mask, (0,0), 255);
+    
+    # Invert floodfilled image
+    im_floodfill_inv = cv2.bitwise_not(im_floodfill)
+    
+    # Combine the two images to get the foreground.
+    im_out = image | im_floodfill_inv
+
+    return im_out
  
 def find_marker(image):
     # convert the image to grayscale, blur it, and detect edges
+    
     # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    gray = cv2.GaussianBlur(image, (5, 5), 0)
-    edged = cv2.Canny(gray, 35, 125)
-    #cv2.imshow("image1", edged)
+
+    gray = image
+    edged = cv2.Canny(gray, 20, 20)
+    cv2.imshow("canny", cv2.resize(edged, (0,0), fx=0.3, fy=0.3))
  
     # find the contours in the edged image and keep the largest one;
     # we'll assume that this is our piece of paper in the image
@@ -63,25 +86,27 @@ BINARY_THRESHOLDS = np.array([[200-scale_blue,200-scale_green,150-scale_red], [2
 # scale_green = 5
 # BINARY_THRESHOLDS = np.array([[65-scale_blue,250-scale_green,5-scale_red], [65+scale_blue,250+scale_green,5+scale_red]])
 
-
 image = cv2.GaussianBlur(image, (5, 5), 0)
 image = cv2.inRange(image, *BINARY_THRESHOLDS)
+image = fill_contour(image)
 
 marker = find_marker(image)
 focalLength = (marker[1][0] * KNOWN_DISTANCE) / KNOWN_WIDTH
 
 # loop over the images
 for imagePath in IMAGE_PATHS:
+
     # load the image, find the marker in the image, then compute the
     # distance to the marker from the camera
+
     image = cv2.imread(imagePath)
     # image = cv2.resize(image, (0,0), fx=0.2, fy=0.2)
 
     edited = cv2.GaussianBlur(image, (5, 5), 0)
     edited = cv2.inRange(edited, *BINARY_THRESHOLDS)
+    edited = fill_contour(edited)
 
-    edited_small = cv2.resize(edited, (0,0), fx=0.3, fy=0.3)
-    cv2.imshow("canny", edited_small)
+    cv2.imshow("filled", cv2.resize(edited, (0,0), fx=0.3, fy=0.3))
 
     marker = find_marker(edited)
     inches = distance_to_camera(KNOWN_WIDTH, focalLength, marker[1][0])
