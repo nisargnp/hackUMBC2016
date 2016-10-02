@@ -88,7 +88,7 @@ while cam.isOpened():
                 (image.shape[1] - 200, image.shape[0] - 20), cv2.FONT_HERSHEY_SIMPLEX,
                 2.0, (0, 255, 0), 3)
     
-    image = cv2.resize(image, (0,0), fx=0.3, fy=0.3)
+    # image = cv2.resize(image, (0,0), fx=0.3, fy=0.3)
     cv2.namedWindow("image", 0)
     cv2.imshow("image", image)
     cv2.resizeWindow("image", 1920, 1080)
