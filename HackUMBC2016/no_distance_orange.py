@@ -7,8 +7,6 @@ sys.path.append('/usr/local/lib/python2.7/site-packages')
 # import the necessary packages
 import numpy as np
 import cv2
-
-test = None;
  
 def find_marker(image):
     # convert the image to grayscale, blur it, and detect edges
@@ -23,8 +21,7 @@ def find_marker(image):
     if (len(cnts) == 0):
         return None
     c = max(cnts, key = cv2.contourArea)
- 
-    test = cv2.minAreaRect(c)
+
     # compute the bounding box of the of the paper region and return it
     return cv2.minAreaRect(c)
 
@@ -41,12 +38,14 @@ KNOWN_DISTANCE = 12.0
 KNOWN_WIDTH = 2.0
  
 # initialize the list of images that we'll be using
-IMAGE_PATHS = ["images/orange_1.jpg", "images/orange_2.jpg"]
+IMAGE_PATHS = ["images/macshot.jpg"]
  
 # load the furst image that contains an object that is KNOWN TO BE 2 feet
 # from our camera, then find the paper marker in the image, and initialize
 # the focal length
 image = cv2.imread(IMAGE_PATHS[0])
+#image = cv2.resize(image, (1280,720))
+print image.shape
 # image = cv2.resize(image, (0,0), fx=0.2, fy=0.2)
 
 #BLUE
@@ -81,6 +80,7 @@ while cam.isOpened():
     edited = cv2.inRange(edited, *BINARY_THRESHOLDS)
 
     edited_small = cv2.resize(edited, (0,0), fx=0.3, fy=0.3)
+    print edited_small.shape
     cv2.imshow("canny", edited_small)
 
     marker = find_marker(edited)
@@ -90,13 +90,39 @@ while cam.isOpened():
  
         # draw a bounding box around the image and display it
         box = np.int0(cv2.cv.BoxPoints(marker))
+        kreygasm = cv2.imread('images/Kreygasm.png')
+        #print box
+        #print box[0][0]
+        #print box[0][1]
         cv2.drawContours(image, [box], -1, (0, 255, 0), 2)
         cv2.putText(image, "%.2fft" % (inches / 12),
                     (image.shape[1] - 200, image.shape[0] - 20), cv2.FONT_HERSHEY_SIMPLEX,
                     2.0, (0, 255, 0), 3)
-    
+        #kreygasm = np.copyto(image.rowRange(min(box[0][0], box[1][0]), max(box[2][0], box[3][0]).colRange(min(box[0][1], box[1][1]), max(box[2][1], box[3][1]))))
+        
+        #zee = abs(max(box[2][0], box[3][0]) - min(box[0][0], box[1][0]))
+        #if (zee <= 0):
+        #    zee = 10
+        #pee = abs(max(box[2][1], box[3][1]) - min(box[0][1], box[1][1]))
+        #if (pee <= 10):
+        #    pee = 10
+
+        #kreygasm = cv2.resize(kreygasm, (zee, pee))
+        #for i in range(0, kreygasm.shape[0] - 1):
+        #    for j in range(0, kreygasm.shape[1] - 1):
+        #        gee = kreygasm[i][j]
+        #        image[min(box[0][0], box[1][0]) + i][min(box[0][1], box[1][1]) + j] = gee
+        #        j += 1
+        
+        #    i += 1
+
+
+
+
     # image = cv2.resize(image, (0,0), fx=0.3, fy=0.3)
     cv2.namedWindow("image", 0)
     cv2.imshow("image", image)
-    cv2.resizeWindow("image", 1920, 1080)
+    print image.shape
+    cv2.resizeWindow("image", 1280, 720)
     cv2.waitKey(30)
+
