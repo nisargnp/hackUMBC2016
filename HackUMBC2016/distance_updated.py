@@ -37,6 +37,7 @@ KNOWN_WIDTH = 2.0
  
 # initialize the list of images that we'll be using
 IMAGE_PATHS = ["images/1ft.jpg", "images/2ft.jpg", "images/3ft.jpg"]
+# IMAGE_PATHS = ["images/g1.jpg", "images/g2.jpg", "images/g3.jpg"]
  
 # load the furst image that contains an object that is KNOWN TO BE 2 feet
 # from our camera, then find the paper marker in the image, and initialize
@@ -44,17 +45,24 @@ IMAGE_PATHS = ["images/1ft.jpg", "images/2ft.jpg", "images/3ft.jpg"]
 image = cv2.imread(IMAGE_PATHS[0])
 # image = cv2.resize(image, (0,0), fx=0.2, fy=0.2)
 
-#BLUE
-# scale_red = 25
-# scale_blue = 20
-# scale_green = 25
-# BINARY_THRESHOLDS = np.array([[200-scale_blue,200-scale_green,150-scale_red], [200+scale_blue,200+scale_green,150+scale_red]])
-
-#ORANGE
-scale_red = 50
-scale_blue = 5
+# BLUE
+scale_red = 25
+scale_blue = 20
 scale_green = 25
-BINARY_THRESHOLDS = np.array([[5-scale_blue,120-scale_green,220-scale_red], [5+scale_blue,120+scale_green,220+scale_red]])
+BINARY_THRESHOLDS = np.array([[200-scale_blue,200-scale_green,150-scale_red], [200+scale_blue,200+scale_green,150+scale_red]])
+
+# ORANGE
+# scale_red = 50
+# scale_blue = 5
+# scale_green = 25
+# BINARY_THRESHOLDS = np.array([[5-scale_blue,120-scale_green,220-scale_red], [5+scale_blue,120+scale_green,220+scale_red]])
+
+# GREEN
+# scale_red = 5
+# scale_blue = 5
+# scale_green = 5
+# BINARY_THRESHOLDS = np.array([[65-scale_blue,250-scale_green,5-scale_red], [65+scale_blue,250+scale_green,5+scale_red]])
+
 
 image = cv2.GaussianBlur(image, (5, 5), 0)
 image = cv2.inRange(image, *BINARY_THRESHOLDS)
